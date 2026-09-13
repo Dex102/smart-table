@@ -10,6 +10,7 @@ import {initTable} from "./components/table.js";
 // @todo: подключение
 import {initPagination} from "./components/pagination.js";
 import {initSorting} from "./components/sorting.js";
+import {initFiltering} from "./components/filtering.js";
 
 // Исходные данные используемые в render()
 const {data, ...indexes} = initData(sourceData);
@@ -40,6 +41,9 @@ function render(action) {
     // @todo: использование
     result = applyPagination(result, state, action);
     result = applySorting(result, state, action);
+    result = applyFiltering(result, state, action);
+    
+    
 
     sampleTable.render(result)
 }
@@ -47,7 +51,7 @@ function render(action) {
 const sampleTable = initTable({
     tableTemplate: 'table',
     rowTemplate: 'row',
-    before: ['header'],
+    before: ['header', 'filter'],
     after: ['pagination']
 }, render);
 
@@ -68,6 +72,10 @@ const applySorting = initSorting([        // Нам нужно передать 
     sampleTable.header.elements.sortByDate,
     sampleTable.header.elements.sortByTotal
 ]);
+
+const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
+    searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
+});
 
 const appRoot = document.querySelector('#app');
 appRoot.appendChild(sampleTable.container);
